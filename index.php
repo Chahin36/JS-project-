@@ -1,4 +1,8 @@
+<?php 
+session_start();
+$registration_success = isset($_GET['registration']) && $_GET['registration'] === 'success';
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -109,7 +113,7 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-12">
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
+            <a href="index.php" class="logo">
               <img src="logo.png" alt="Chain App Dev">
             </a>
             <!-- ***** Logo End ***** -->
@@ -120,7 +124,21 @@ https://templatemo.com/tm-570-chain-app-dev
               <li class="scroll-to-section"><a href="#about">About</a></li>
               <li class="scroll-to-section"><a href="#pricing">Pricing</a></li>
               <li class="scroll-to-section"><a href="#newsletter">Newsletter</a></li>
-              <li><div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign In Now</a></div></li> 
+              <?php if(isset($_SESSION['user_id'])): ?>
+                <li class="user-menu">
+                  <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <?php echo htmlspecialchars($_SESSION['full_name']); ?>
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="logout.php">Logout</a></li>
+                    </ul>
+                  </div>
+                </li>
+              <?php else: ?>
+                <li><div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign In Now</a></div></li>
+              <?php endif; ?>
             </ul>        
             <a class='menu-trigger'>
                 <span>Menu</span>
@@ -732,13 +750,13 @@ https://templatemo.com/tm-570-chain-app-dev
             <div class="logo">
               <img src="logo.png" alt="">
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+            <p></p>
           </div>
         </div>
         <div class="col-lg-12">
           <div class="copyright-text">
-            <p>Copyright © 2022 Chain App Dev Company. All Rights Reserved. 
-          <br>Design: <a href="https://templatemo.com/" target="_blank" title="css templates">TemplateMo</a></p>
+            <p>Copyright © 2025 TunisConnect Company. All Rights Reserved. 
+          
           </div>
         </div>
       </div>

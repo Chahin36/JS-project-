@@ -20,7 +20,7 @@ if (!$conn) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
     $email_username = mysqli_real_escape_string($conn, $_POST['email_username']);
-    $user_password = $_POST['password']; // Don't escape password - it can corrupt it
+    $user_password = $_POST['password'];
 
     // Query to find user by email OR username
     $sql = "SELECT * FROM users WHERE email='$email_username' OR full_name='$email_username'";
@@ -33,25 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
 
-        // Verify password - two options depending on how passwords are stored
-        
-        
-        
-        
-        // OPTION 2: If passwords are hashed (RECOMMENDED)
         if (password_verify($user_password, $user['password'])) {
             // Login successful
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['email'] = $user['email'];
 
-            echo "Login successful! Welcome " . htmlspecialchars($user['full_name']);
-            // header("Location: dashboard.php");
-            // exit();
+            header("Location: index.php");
+            exit();
         } else {
             echo "Invalid password.";
         }
-        
     } else {
         echo "No user found with that email or username.";
     }

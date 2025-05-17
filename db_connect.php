@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $username = "root";
-$password = "";  // Default XAMPP MySQL password is empty
+$password = "";  
 $database = "app";
 
 // Create connection

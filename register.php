@@ -1,4 +1,7 @@
 <?php
+// Start the session
+session_start();
+
 // Include database connection
 require 'db_connect.php';
 
@@ -15,7 +18,17 @@ $stmt = $conn->prepare("INSERT INTO users (full_name, email, password) VALUES (?
 $stmt->bind_param("sss", $full_name, $email, $hashed_password);
 
 if ($stmt->execute()) {
-    echo "Registration successful!";
+    // Registration successful - now log the user in
+    $user_id = $stmt->insert_id; // Get the ID of the newly registered user
+    
+    // Set session variables
+    $_SESSION['user_id'] = $user_id;
+    $_SESSION['full_name'] = $full_name;
+    $_SESSION['email'] = $email;
+    
+    // Redirect to home page
+    header("Location: index.php");
+    exit();
 } else {
     echo "Error: " . $stmt->error;
 }

@@ -2233,4 +2233,44 @@ responsive
   border-radius: 12px; /* Optional: adds soft rounded corners */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
 }
+/* User menu styles */
+.user-menu .dropdown {
+    position: relative;
+    display: inline-block;
+}
 
+.user-menu .dropdown-toggle {
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.user-menu .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.user-menu .dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.user-menu .dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-menu .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.user-menu .caret {
+    margin-left: 5px;
+}
