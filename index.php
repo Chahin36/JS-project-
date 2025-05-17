@@ -3,6 +3,7 @@ session_start();
 $registration_success = isset($_GET['registration']) && $_GET['registration'] === 'success';
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +39,52 @@ https://templatemo.com/tm-570-chain-app-dev
   </head>
 
 <body>
+<script>
+$(document).ready(function() {
+    // Edit button click
+    $('.edit-item').click(function() {
+        const id = $(this).data('id');
+        
+        // Fetch item data (you'll need to create this endpoint)
+        $.get('get_pricing_item.php?id=' + id, function(data) {
+            $('#edit_id').val(data.id);
+            $('#edit_title').val(data.title);
+            $('#edit_image').val(data.image_path);
+            $('#edit_description').val(data.description);
+            $('#edit_features').val(data.features);
+            $('#editModal').modal('show');
+        }, 'json');
+    });
+    
+    // Save edited item
+    $('#editForm').submit(function(e) {
+        e.preventDefault();
+        
+        $.post('update_pricing_item.php', $(this).serialize(), function(response) {
+            if(response.success) {
+                location.reload(); // Refresh to see changes
+            } else {
+                alert('Error: ' + response.message);
+            }
+        }, 'json');
+    });
+    
+    // Delete button click
+    $('.delete-item').click(function() {
+        if(confirm('Are you sure you want to delete this item?')) {
+            const id = $(this).data('id');
+            
+            $.post('delete_pricing_item.php', {id: id}, function(response) {
+                if(response.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            }, 'json');
+        }
+    });
+});
+</script>
 <script>
   
   //newsletter
@@ -108,6 +155,7 @@ https://templatemo.com/tm-570-chain-app-dev
 
   <!-- ***** Header Area Start ***** -->
   <header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
+    
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -622,59 +670,91 @@ https://templatemo.com/tm-570-chain-app-dev
 
   <div id="pricing" class="pricing-tables">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-          <div class="section-heading">
-            <h4>We Have The Best Pre-Order <em>Prices</em> You Can Get</h4>
-            <img src="assets/images/pricing-table-01.png" alt="">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor incididunt ut labore et dolore magna.</p>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="pricing-item-regular">
-            <h4>TELECOMONEY</h4>
-            <div class="icon">
-              <img src="assets/images/pricing-table-01.png" alt="TELECOMONEY">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="section-heading">
+                    <h4>We Have The Best Pre-Order <em>Prices</em> You Can Get</h4>
+                    <img src="assets/images/pricing-table-01.png" alt="">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor incididunt ut labore et dolore magna.</p>
+                </div>
             </div>
-            <ul>
-              <li>Gérez votre compte</li>
-              <li>Rechargez votre ligne téléphonique fixe et mobile ou celle de vos proches</li>
-              <li>Envoyez de l'argent à vos amis et proches quel que soit l’opérateur téléphonique</li>
-              <li>Encaissez vos mandats : bourse, minute et Western Union, CNAM, CNSS, CNRPS</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="col-lg-4">
-          <div class="pricing-item-regular">
-            <h4>RECHARGE TT CASH</h4>
-            <div class="icon">
-              <img src="assets/images/pricing-table-01.png" alt="">
+            
+            <?php
+            // Connect to database
+            require 'db_connect.php';
+            
+            // Get pricing items
+            $result = $conn->query("SELECT * FROM pricing_items");
+            
+            while($item = $result->fetch_assoc()):
+                $features = explode("\n", $item['features']);
+            ?>
+            <div class="col-lg-4">
+                <div class="pricing-item-regular">
+                    <h4><?php echo htmlspecialchars($item['title']); ?></h4>
+                    <div class="icon">
+                        <img src="<?php echo htmlspecialchars($item['image_path']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
+                    </div>
+                    <ul>
+                        <?php foreach($features as $feature): ?>
+                            <li><?php echo htmlspecialchars($feature); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    
+                    <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+                    <div class="admin-actions mt-3">
+                        <button class="btn btn-sm btn-primary edit-item" data-id="<?php echo $item['id']; ?>">Edit</button>
+                        <button class="btn btn-sm btn-warning modify-item" data-id="<?php echo $item['id']; ?>">Modify</button>
+                        <button class="btn btn-sm btn-danger delete-item" data-id="<?php echo $item['id']; ?>">Delete</button>
+                    </div>
+                    <?php endif; ?>
+                </div>
             </div>
-            <ul>
-              <li>Grattez le panneau grisé de votre carte et découvrez votre code de recharge à 13 chiffres</li>
-              <li>Composez *123#, entrez votre code de recharge puis #</li>
-            </ul>
-          </div>
+            <?php endwhile; ?>
         </div>
-        
-        <div class="col-lg-4">
-          <div class="pricing-item-regular">
-            <h4>PRÉLÈVEMENT</h4>
-            <div class="icon">
-              <img src="assets/images/pricing-table-01.png" alt="PRÉLÈVEMENT">
-            </div>
-            <ul>
-              <li>Remplir le formulaire d’inscription disponible dans tous les Espaces TT et sur le site WEB TUNISIE TELECOM</li>
-              <li>Signer cette demande auprès de votre banque ou votre bureau de poste</li>
-              <li>Déposer cette demande auprès de votre conseiller TUNISIE TELECOM</li>
-            </ul>
-          </div>
-        </div>
-        
-      </div>
     </div>
-  </div> 
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Pricing Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="edit_id" name="id">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image Path</label>
+                        <input type="text" class="form-control" id="edit_image" name="image_path" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Features (one per line)</label>
+                        <textarea class="form-control" id="edit_features" name="features" rows="5"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+<div class="col-12 text-center mb-4">
+    <button class="btn btn-success" id="addNewItem">Add New Pricing Item</button>
+</div>
+<?php endif; ?>
 
   <footer id="newsletter">
     <div class="container">

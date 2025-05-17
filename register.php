@@ -14,7 +14,7 @@ $password = $_POST['password'];
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 // Prepare and execute the insert statement
-$stmt = $conn->prepare("INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO users (full_name, email, password, is_admin) VALUES (?, ?, ?, 0)");
 $stmt->bind_param("sss", $full_name, $email, $hashed_password);
 
 if ($stmt->execute()) {
